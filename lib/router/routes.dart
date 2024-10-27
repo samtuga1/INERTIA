@@ -1,5 +1,5 @@
 class Routes {
   Routes._();
 
-  final home = '/';
+  static const home = '/';
 }

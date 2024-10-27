@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:inertia/screens/screens.dart';
+import 'package:inertia/router/routes.dart';
+import 'package:inertia/screens/home/home_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -8,7 +9,7 @@ class AppRouter {
   static GoRouter config = GoRouter(
     routes: <RouteBase>[
       GoRoute(
-        path: '/',
+        path: Routes.home,
         builder: (BuildContext context, GoRouterState state) {
           return const HomeScreen();
         },

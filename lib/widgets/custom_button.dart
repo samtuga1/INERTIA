@@ -13,7 +13,7 @@ class CustomButton extends StatelessWidget {
   final bool isBusy;
   final bool isValidated;
   final double? borderRadius, borderWidth;
-  final EdgeInsets? padding;
+  final EdgeInsets padding;
 
   const CustomButton({
     super.key,
@@ -22,7 +22,10 @@ class CustomButton extends StatelessWidget {
     this.textStyle,
     this.borderRadius,
     this.textColor,
-    this.padding,
+    this.padding = const EdgeInsets.symmetric(
+      vertical: 18,
+      horizontal: 12,
+    ),
     this.child,
     this.borderWidth,
     this.addBorder = false,
@@ -39,8 +42,8 @@ class CustomButton extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = Theme.of(context).buttonTheme.colorScheme!;
     final primaryColor = Theme.of(context).primaryColor;
-    final borderRadius = BorderRadius.circular(this.borderRadius ?? 25);
-    final buttonBorderColor = primaryColor;
+    final borderRadius = BorderRadius.circular(this.borderRadius ?? 4);
+    final buttonBorderColor = primaryColor.withOpacity(0.5);
 
     return Theme(
       data: Theme.of(context).copyWith(
@@ -56,34 +59,61 @@ class CustomButton extends StatelessWidget {
         ),
       ),
       child: Builder(
-        builder: (context) {
-          final colorScheme = Theme.of(context).buttonTheme.colorScheme!;
+        builder: (ctx) {
+          // final colorScheme = Theme.of(ctx).buttonTheme.colorScheme!;
           return ElevatedButton(
             onPressed: isValidated && !isBusy ? onPressed : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-              disabledBackgroundColor: colorScheme.onSurface.withOpacity(0.12),
-              foregroundColor: colorScheme.onPrimary,
-              disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
-              minimumSize: Size.zero,
-              elevation: 0,
-              padding: padding ?? const EdgeInsets.symmetric(vertical: 13.5),
-              shape: addBorder
-                  ? RoundedRectangleBorder(
-                      borderRadius: borderRadius,
-                      side: BorderSide(
-                        width: borderWidth ?? 1,
-                        color: isValidated
-                            ? isBusy
-                                ? theme.disabledColor
-                                : buttonBorderColor
-                            : theme.disabledColor,
-                      ),
-                    )
-                  : RoundedRectangleBorder(
-                      borderRadius: borderRadius,
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.resolveWith((states) {
+                final isLightMode =
+                    Theme.of(context).brightness == Brightness.light;
+                if (addBorder) {
+                  if (states.contains(MaterialState.hovered) && isLightMode) {
+                    return colorScheme.onPrimary;
+                  }
+                  return colorScheme.onBackground;
+                }
+                if (isLightMode) {
+                  return Colors.white;
+                }
+                return Colors.black;
+              }),
+              elevation: const MaterialStatePropertyAll(0),
+              padding: MaterialStatePropertyAll(padding),
+              backgroundColor: MaterialStateProperty.resolveWith((states) {
+                if (states.contains(MaterialState.hovered)) {
+                  if (addBorder) {
+                    return Theme.of(context).primaryColor.withOpacity(0.5);
+                  }
+                  return Theme.of(ctx).primaryColor.withOpacity(0.8);
+                }
+                return Theme.of(ctx).primaryColor;
+              }),
+              shape: MaterialStatePropertyAll(switch (addBorder) {
+                true => RoundedRectangleBorder(
+                    borderRadius: borderRadius,
+                    side: BorderSide(
+                      width: borderWidth ?? 1,
+                      color: isValidated
+                          ? isBusy
+                              ? theme.disabledColor
+                              : buttonBorderColor
+                          : theme.disabledColor,
                     ),
+                  ),
+                false => RoundedRectangleBorder(
+                    borderRadius: borderRadius,
+                  ),
+              }),
             ),
+            // ElevatedButton.styleFrom(
+
+            //   // disabledBackgroundColor: colorScheme.onSurface.withOpacity(0.12),
+            //   // foregroundColor: colorScheme.onPrimary,
+            //   // disabledForegroundColor: colorScheme.onSurface.withOpacity(0.38),
+            //   // minimumSize: Size.zero,
+
+            // ),
             child: !isBusy
                 ? child ??
                     Row(

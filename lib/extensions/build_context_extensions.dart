@@ -6,4 +6,6 @@ extension BuildContextExtensions on BuildContext {
 
   /// Full height of the screen
   double get width => MediaQuery.sizeOf(this).width;
+
+  ThemeData get theme => Theme.of(this);
 }
